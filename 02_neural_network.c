@@ -49,4 +49,55 @@ double sigmoidDerivative(double val){
 }
 
 void feedForward(void){
+	int inp, hid, out;
+	double sum;
+	
+	for (hid = 0; hid < HIDDEN_NEURONS; hid++){
+		sum = 0.0;
+		for (inp = 0; inp < INPUT_NEURONS; inp++){
+			sum += inputs[inp]*wih[inp][hid];
+		}
+		
+		sum += wih[INPUT_NEURONS][hid];
+		hidden[hid] = sigmoid(sum);
+	}
+	
+	for (out = 0; out < OUTPUT_NEURONS; out++){
+		sum = 0.0;
+		for (hid = 0; hid < HIDDEN_NEURONS; hid++) {
+			sum += hidden[hid]*who[hid][out];
+		}
+		sum += who[HIDDEN_NEURONS][out];
+		actual[out] = sigmoid(sum);
+	}
+}
+
+void backPropagate(void){
+	int inp, hid, out;
+	
+	for (out = 0; out < OUTPUT_NEURONS; out++){
+		erro[out] = (target[out] - actual[out])*sigmoidDerivative(actual[out]);
+	}
+	
+	for (hid = 0; hid < HIDDEN_NEURONS; hid++){
+		errh[hid] = 0.0;
+		for (out = 0; out < OUTPUT_NEURONS; out++){
+			errh[hid] += erro[out]*who[hid][out];
+		}
+		errh[hid] *= sigmoidDerivative(hidden[hid]);
+	}
+	
+	for (out = 0; out < OUTPUT_NEURONS; out++){
+		for(hid = 0; hid < HIDDEN_NEURONS; hid++){
+			who[hid][out] += (LEARN_RATE*erro[out]*hidden[hid]);
+		}
+		who[HIDDEN_NEURONS][out] += (LEARN_RATE*erro[out]);
+	}
+	
+	for (hid = 0; hid < HIDDEN_NEURONS; hid++){
+		for (inp = 0; inp < INPUT_NEURONS; inp++){
+			wih[inp][hid] += (LEARN_RATE * errh[hid] * inputs[inp]);
+		}
+		wih[INPUT_NEURONS][hid] += (LEARN_RATE * errh[hid]);
+	}
 }
