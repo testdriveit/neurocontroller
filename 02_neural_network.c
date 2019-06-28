@@ -6,17 +6,17 @@
 #define HIDDEN_NEURONS	3
 #define OUTPUT_NEURONS	4
 
-double wih[INPUT_NEURONS+1][HIDDEN_NEURONS]
+double wih[INPUT_NEURONS+1][HIDDEN_NEURONS];
 
-double who[HIDDEN_NEURONS+1][OUTPUT_NEURONS]
+double who[HIDDEN_NEURONS+1][OUTPUT_NEURONS];
 
-double inputs[INPUT_NEURONS]
-double hidden[HIDDEN_NEURONS]
-double target[OUTPUT_NEURONS]
-double actual[OUTPUT_NEURONS]
+double inputs[INPUT_NEURONS];
+double hidden[HIDDEN_NEURONS];
+double target[OUTPUT_NEURONS];
+double actual[OUTPUT_NEURONS];
 
-double erro[OUTPUT_NEURONS]
-double errh[HIDDEN_NEURONS]
+double erro[OUTPUT_NEURONS];
+double errh[HIDDEN_NEURONS];
 
 #define LEARN_RATE	0.2
 #define RAND_WEIGHT	(((float)rand() / (float)RAND_MAX) - 0.5)
@@ -45,7 +45,7 @@ double sigmoid(double val){
 }
 
 double sigmoidDerivative(double val){
-	return (val * (1.0 - val))
+	return (val * (1.0 - val));
 }
 
 void feedForward(void){
@@ -101,3 +101,54 @@ void backPropagate(void){
 		wih[INPUT_NEURONS][hid] += (LEARN_RATE * errh[hid]);
 	}
 }
+
+#define MAX_SAMPLES 18
+
+typedef struct {
+	double health;
+	double knife;
+	double gun;
+	double enemy;
+	double out[OUTPUT_NEURONS];
+} ELEMENT;
+
+ELEMENT samples[MAX_SAMPLES] = {
+	{ 2.0, 0.0, 0.0, 0.0, {0.0, 0.0, 1.0, 0.0} },  
+	{ 2.0, 0.0, 0.0, 1.0, {0.0, 0.0, 1.0, 0.0} },  
+	{ 2.0, 0.0, 1.0, 1.0, {1.0, 0.0, 0.0, 0.0} },  
+	{ 2.0, 0.0, 1.0, 2.0, {1.0, 0.0, 0.0, 0.0} },  
+	{ 2.0, 1.0, 0.0, 2.0, {0.0, 0.0, 0.0, 1.0} },  
+	{ 2.0, 1.0, 0.0, 1.0, {1.0, 0.0, 0.0, 0.0} },
+	{ 1.0, 0.0, 0.0, 0.0, {0.0, 0.0, 1.0, 0.0} },  
+	{ 1.0, 0.0, 0.0, 1.0, {0.0, 0.0, 0.0, 1.0} },  
+	{ 1.0, 0.0, 1.0, 1.0, {1.0, 0.0, 0.0, 0.0} },  
+	{ 1.0, 0.0, 1.0, 2.0, {0.0, 0.0, 0.0, 1.0} },  
+	{ 1.0, 1.0, 0.0, 2.0, {0.0, 0.0, 0.0, 1.0} },  
+	{ 1.0, 1.0, 0.0, 1.0, {0.0, 0.0, 0.0, 1.0} },
+	{ 0.0, 0.0, 0.0, 0.0, {0.0, 0.0, 1.0, 0.0} },  
+	{ 0.0, 0.0, 0.0, 1.0, {0.0, 0.0, 0.0, 1.0} },
+	{ 0.0, 0.0, 1.0, 1.0, {0.0, 0.0, 0.0, 1.0} },  
+	{ 0.0, 0.0, 1.0, 2.0, {0.0, 1.0, 0.0, 0.0} },  
+	{ 0.0, 1.0, 0.0, 2.0, {0.0, 1.0, 0.0, 0.0} }, 
+	{ 0.0, 1.0, 0.0, 1.0, {0.0, 0.0, 0.0, 1.0} } 
+};
+
+char *strings[4] = {"Attack", "Run", "Wander", "Hide"};
+
+int action(double* vector) {
+	int index, sel;
+	double max;
+
+	sel = 0;
+	max = vector[sel];
+
+	for (index = 1; index < OUTPUT_NEURONS; index++){
+		if (vector[index] > max) {
+			max = vector[index];
+			sel = index;
+		}
+	}
+
+	return sel;
+}
+
