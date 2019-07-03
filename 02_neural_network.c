@@ -28,7 +28,7 @@ void assgnRandomWeights(void){
 	int hid, inp, out;
 	
 	for(inp = 0; inp < INPUT_NEURONS+1; inp++){
-		for (hid = 0; hid < HIDDEN_NEURONS+1; hid++){
+		for (hid = 0; hid < HIDDEN_NEURONS; hid++){
 			wih[inp][hid] = RAND_WEIGHT;
 		}
 	}
